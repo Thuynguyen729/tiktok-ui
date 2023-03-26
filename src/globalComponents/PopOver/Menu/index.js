@@ -8,9 +8,10 @@ import styles from './Menu.module.scss';
 import { useState } from 'react';
 
 const cx = classNames.bind(styles);
+
 const defaultFn = () => {};
 
-function Menu({ children, items = [], onChange }) {
+function Menu({ children, items = [], onChange = defaultFn }) {
     const [history, setHistory] = useState([{ data: items }]);
     // console.log(history);
     const current = history[history.length - 1];
@@ -48,7 +49,7 @@ function Menu({ children, items = [], onChange }) {
                     <PopOverWrapper className={cx('menu-popper')}>
                         {history.length > 1 && (
                             <Header
-                                title="Language"
+                                title={current.title}
                                 onBack={() => {
                                     setHistory((prev) => prev.slice(0, prev.length - 1));
                                 }}
@@ -58,6 +59,7 @@ function Menu({ children, items = [], onChange }) {
                     </PopOverWrapper>
                 </div>
             )}
+            onHide={() => setHistory((prev) => prev.slice(0, 1))}
         >
             {children}
         </Tippy>
