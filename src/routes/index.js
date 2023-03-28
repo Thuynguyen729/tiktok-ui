@@ -16,7 +16,7 @@ const publicRoutes = [
     },
 
     {
-        path: '/profile',
+        path: '/:nickname',
         component: Profile,
     },
     {
