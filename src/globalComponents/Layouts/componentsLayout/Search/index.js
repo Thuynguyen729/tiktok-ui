@@ -1,13 +1,16 @@
 import { useEffect, useState, useRef } from 'react';
-import { faCircleXmark, faLessThanEqual, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import axios from 'axios';
+import { faCircleXmark, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeadlessTippy from '@tippyjs/react/headless';
 
+import * as searchServices from '~/apiServices/searchServices';
 import { Wrapper as PopOverWrapper } from '~/globalComponents/PopOver';
 import AccountItem from '~/globalComponents/AccountItem';
 import { SearchIcon } from '~/globalComponents/Icons';
 import classNames from 'classnames/bind';
 import styles from './Search.module.scss';
+import { useDebounce } from '~/hooks';
 
 const cx = classNames.bind(styles);
 
@@ -17,26 +20,27 @@ function Search() {
     const [showResult, setShowResult] = useState(true);
     const [loading, setLoading] = useState(false);
 
+    const debounced = useDebounce(searchValue, 500);
+
     const inputRef = useRef();
 
     useEffect(() => {
-        if (!searchValue) {
+        if (!debounced.trim()) {
             setSearchResult([]);
             return;
         }
 
-        setLoading(true);
+        const fetchApi = async () => {
+            setLoading(true);
 
-        fetch(`https://tiktok.fullstack.edu.vn/api/users/search?q=${encodeURIComponent(searchValue)}&type=less`)
-            .then((res) => res.json())
-            .then((res) => {
-                setSearchResult(res.data);
-                setLoading(false);
-            })
-            .catch(() => {
-                setLoading(false);
-            });
-    }, [searchValue]);
+            const result = await searchServices.search(debounced);
+            setSearchResult(result);
+
+            setLoading(false);
+        };
+
+        fetchApi();
+    }, [debounced]);
 
     return (
         <HeadlessTippy
@@ -65,7 +69,7 @@ function Search() {
                     onFocus={() => setShowResult(true)}
                 />
                 {!!searchValue && !loading && (
-                    <button
+                    <s
                         className={cx('clear')}
                         onClick={() => {
                             setSearchValue('');
@@ -73,7 +77,7 @@ function Search() {
                         }}
                     >
                         <FontAwesomeIcon icon={faCircleXmark} />
-                    </button>
+                    </s>
                 )}
 
                 {loading && <FontAwesomeIcon className={cx('loading')} icon={faSpinner} />}
