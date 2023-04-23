@@ -3,7 +3,7 @@ import { faCircleXmark, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HeadlessTippy from '@tippyjs/react/headless';
 
-import * as searchServices from '~/apiServices/searchServices';
+import * as searchServices from '~/services/searchServices';
 import { Wrapper as PopOverWrapper } from '~/globalComponents/PopOver';
 import AccountItem from '~/globalComponents/AccountItem';
 import { SearchIcon } from '~/globalComponents/Icons';
